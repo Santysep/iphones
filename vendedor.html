@@ -12,10 +12,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .brand-purple { color: #5900ff; }
-        .bg-brand-purple { background-color: #5900ff; }
-        .border-brand-purple { border-color: #5900ff; }
-        .ring-brand-purple:focus { ring-color: #5900ff; }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-[#5900ff] selection:text-white">
@@ -24,11 +20,9 @@
     <header class="bg-slate-900 border-b border-slate-800/80 py-3 px-6 shadow-md no-print">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <!-- Botón Volver al Inicio -->
                 <button onclick="window.location.href='index.html'" class="bg-slate-800 hover:bg-slate-700 text-slate-300 p-2 rounded-xl text-xs transition cursor-pointer" title="Volver al Inicio">
                     <i class="fa-solid fa-arrow-left"></i>
                 </button>
-                <!-- Editable Logo Slot -->
                 <div id="headerLogoContainer" class="relative group cursor-pointer w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center overflow-hidden shadow-inner">
                     <span id="headerLogoPlaceholder" class="text-[10px] text-slate-400 font-bold text-center px-1">Logo</span>
                     <img id="headerLogoImg" src="" alt="Logo" class="w-full h-full object-cover hidden">
@@ -56,7 +50,7 @@
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 w-full my-auto">
         
-        <!-- Controls Section (Left Column) -->
+        <!-- Controls Section -->
         <div id="controlsSection" class="lg:col-span-4 bg-slate-900/90 backdrop-blur border border-slate-800 rounded-3xl p-5 shadow-xl flex flex-col justify-between space-y-4">
             <div class="space-y-4">
                 <h2 class="text-sm font-bold text-white border-b border-slate-800 pb-2.5 flex items-center space-x-2">
@@ -64,7 +58,6 @@
                     <span>Parámetros de Cotización</span>
                 </h2>
 
-                <!-- Client Name -->
                 <div>
                     <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Nombre del Cliente (Opcional)</label>
                     <div class="relative">
@@ -74,7 +67,6 @@
                     </div>
                 </div>
 
-                <!-- Product Description -->
                 <div>
                     <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Producto o Dispositivo</label>
                     <div class="relative">
@@ -84,7 +76,6 @@
                     </div>
                 </div>
 
-                <!-- Cash Price -->
                 <div>
                     <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Valor de Venta / Base ($)</label>
                     <div class="relative">
@@ -94,7 +85,6 @@
                     </div>
                 </div>
 
-                <!-- Frequency Toggles -->
                 <div class="pt-2 border-t border-slate-800">
                     <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2">Frecuencias a mostrar</label>
                     <div class="grid grid-cols-3 gap-1.5">
@@ -114,9 +104,7 @@
                 </div>
             </div>
 
-            <!-- Action Buttons -->
             <div class="space-y-2 pt-2">
-                <!-- Botón Guardar Cotización en Supabase -->
                 <button onclick="guardarCotizacionNube()" class="w-full bg-[#5900ff] hover:bg-[#4b00d6] text-white font-bold py-2.5 px-4 rounded-xl transition shadow-lg shadow-[#5900ff]/30 flex items-center justify-center space-x-2 text-xs cursor-pointer">
                     <i class="fa-solid fa-cloud-arrow-up text-base"></i>
                     <span>Guardar Cotización en el Sistema</span>
@@ -128,34 +116,25 @@
             </div>
         </div>
 
-        <!-- Preview Card Section (Right Column) -->
+        <!-- Preview Card Section -->
         <div class="lg:col-span-8 flex flex-col justify-center items-center relative">
-            
-            <!-- Floating Exit Clean Mode Button (Visible only in clean mode) -->
             <button onclick="toggleCleanMode()" id="exitCleanModeBtn" class="hidden absolute top-2 right-2 z-50 bg-slate-800/90 hover:bg-slate-700 text-white p-3 rounded-full shadow-2xl transition border border-slate-600 no-print" title="Salir de Modo Screenshot">
                 <i class="fa-solid fa-xmark text-base"></i>
             </button>
 
-            <!-- Screenshot Card Container - Compact 2x2 Grid Layout for perfect screen fit -->
             <div id="quotationCard" class="w-full max-w-2xl bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 border-2 border-[#5900ff]/40 rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden">
-                
-                <!-- Background decorative glow in #5900ff -->
                 <div class="absolute -top-20 -right-20 w-40 h-40 bg-[#5900ff]/15 rounded-full blur-3xl pointer-events-none"></div>
                 <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-[#5900ff]/10 rounded-full blur-3xl pointer-events-none"></div>
 
-                <!-- Card Header with Editable Logo & Title Slot -->
                 <div class="flex items-center justify-between border-b border-slate-800 pb-3.5 mb-4">
                     <div class="flex items-center space-x-3">
-                        <!-- Card Logo Slot -->
                         <div id="cardLogoContainer" class="relative group cursor-pointer w-12 h-12 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center overflow-hidden shadow-md">
                             <span id="cardLogoPlaceholder" class="text-[10px] text-slate-400 font-bold text-center px-1">Logo</span>
                             <img id="cardLogoImg" src="" alt="Logo" class="w-full h-full object-cover hidden">
                             <input type="file" accept="image/*" onchange="loadLogo(event)" class="absolute inset-0 opacity-0 cursor-pointer" title="Subir logo">
                         </div>
                         <div>
-                            <div class="flex items-center space-x-1">
-                                <span id="displayCompanyName" class="text-xl font-black tracking-tight text-white">VALOPHONE</span>
-                            </div>
+                            <span id="displayCompanyName" class="text-xl font-black tracking-tight text-white">VALOPHONE</span>
                             <p class="text-[9px] font-semibold text-slate-400 uppercase tracking-widest">Cotización Oficial de Crédito</p>
                         </div>
                     </div>
@@ -164,7 +143,6 @@
                     </div>
                 </div>
 
-                <!-- Client / Product Info Badge -->
                 <div id="cardInfoBox" class="bg-slate-950/80 border border-slate-800/80 rounded-xl px-4 py-2.5 mb-4 flex items-center justify-between">
                     <div>
                         <span class="text-[9px] text-slate-400 uppercase tracking-wider block">Cliente</span>
@@ -176,38 +154,28 @@
                     </div>
                 </div>
 
-                <!-- Plans Grid Container (2x2 Grid) -->
-                <div id="plansContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <!-- Dinámicamente inyectado mediante JS -->
-                </div>
+                <div id="plansContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
 
-                <!-- Card Footer Stamp -->
                 <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-500">
                     <span class="font-medium"><i class="fa-solid fa-location-dot text-[#5900ff] mr-1"></i> Quito, Ecuador</span>
                     <span id="displayFooterBrand" class="font-semibold text-slate-400">Garantía y Confianza VALOPHONE</span>
                 </div>
             </div>
-
-            <p class="text-[11px] text-slate-500 mt-3 text-center no-print">
-                Consejo: Haz clic en <span class="text-slate-300 font-semibold">"Modo Screenshot"</span> para ocultar los controles y tomar la captura perfecta.
-            </p>
         </div>
-
     </main>
 
-    <!-- Footer -->
     <footer class="bg-slate-900 border-t border-slate-800 py-2.5 text-center text-[11px] text-slate-500 no-print">
         <span id="displayFooterCopy">VALOPHONE</span> &copy; 2026 - Todos los derechos reservados
     </footer>
 
-    <!-- html2canvas Library for direct image generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-    <!-- Script de lógica y conexión Supabase limpia -->
     <script>
-        const supabaseUrl = 'https://rhpixwhmoilxehjnyzjb.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJocGl4d2htb2lseGVoam56eWpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MDM1MTYsImV4cCI6MjEwNjk3OTUxNn0.4YnjRf8oAyw2B3D-xEg5qRDQEoD_fuh8--wICXZedn8';
-        const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        // Inicialización de Supabase con URL limpia y llave Anon
+        const SUPABASE_URL = 'https://rhpixwhmoilxehjnyzjb.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJocGl4d2htb2lseGVoam56eWpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MDM1MTYsImV4cCI6MjEwNjk3OTUxNn0.4YnjRf8oAyw2B3D-xEg5qRDQEoD_fuh8--wICXZedn8';
+        
+        const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let isCleanMode = false;
 
@@ -243,17 +211,10 @@
         async function copyCardAsImage() {
             const card = document.getElementById('quotationCard');
             try {
-                const canvas = await html2canvas(card, {
-                    scale: 3,
-                    backgroundColor: null,
-                    useCORS: true
-                });
-
+                const canvas = await html2canvas(card, { scale: 3, backgroundColor: null, useCORS: true });
                 canvas.toBlob(async (blob) => {
                     try {
-                        await navigator.clipboard.write([
-                            new ClipboardItem({ 'image/png': blob })
-                        ]);
+                        await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
                         alert('¡Imagen de la cotización copiada al portapapeles!');
                     } catch (err) {
                         const link = document.createElement('a');
@@ -282,18 +243,13 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const imageUrl = e.target.result;
-                    
-                    const headerImg = document.getElementById('headerLogoImg');
-                    const headerPlaceholder = document.getElementById('headerLogoPlaceholder');
-                    headerImg.src = imageUrl;
-                    headerImg.classList.remove('hidden');
-                    headerPlaceholder.classList.add('hidden');
+                    document.getElementById('headerLogoImg').src = imageUrl;
+                    document.getElementById('headerLogoImg').classList.remove('hidden');
+                    document.getElementById('headerLogoPlaceholder').classList.add('hidden');
 
-                    const cardImg = document.getElementById('cardLogoImg');
-                    const cardPlaceholder = document.getElementById('cardLogoPlaceholder');
-                    cardImg.src = imageUrl;
-                    cardImg.classList.remove('hidden');
-                    cardPlaceholder.classList.add('hidden');
+                    document.getElementById('cardLogoImg').src = imageUrl;
+                    document.getElementById('cardLogoImg').classList.remove('hidden');
+                    document.getElementById('cardLogoPlaceholder').classList.add('hidden');
                 }
                 reader.readAsDataURL(file);
             }
@@ -333,79 +289,48 @@
 
             plans.forEach(plan => {
                 const totalWithInterest = basePrice * (1 + plan.interest);
-                
                 const monthlyVal = totalWithInterest / plan.months;
                 const biweeklyVal = totalWithInterest / (plan.months * 2);
                 const weeklyVal = totalWithInterest / (plan.months * 4);
 
                 let rowsHTML = '';
-
-                if (showMonthly) {
-                    rowsHTML += `
-                        <div class="flex justify-between items-center bg-slate-950/70 px-2.5 py-1.5 rounded-lg border border-slate-800/60">
-                            <span class="text-[10px] text-slate-300 font-medium flex items-center"><i class="fa-regular fa-calendar text-[#b48bff] mr-1.5"></i> Mensual (${plan.months})</span>
-                            <span class="text-xs font-bold text-white">$${monthlyVal.toFixed(2)}</span>
-                        </div>
-                    `;
-                }
-
-                if (showBiweekly) {
-                    rowsHTML += `
-                        <div class="flex justify-between items-center bg-slate-950/70 px-2.5 py-1.5 rounded-lg border border-slate-800/60">
-                            <span class="text-[10px] text-slate-300 font-medium flex items-center"><i class="fa-solid fa-calendar-days text-[#b48bff] mr-1.5"></i> Quincenal (${plan.months * 2})</span>
-                            <span class="text-xs font-bold text-white">$${biweeklyVal.toFixed(2)}</span>
-                        </div>
-                    `;
-                }
-
-                if (showWeekly) {
-                    rowsHTML += `
-                        <div class="flex justify-between items-center bg-slate-950/70 px-2.5 py-1.5 rounded-lg border border-slate-800/60">
-                            <span class="text-[10px] text-slate-300 font-medium flex items-center"><i class="fa-solid fa-calendar-week text-[#b48bff] mr-1.5"></i> Semanal (${plan.months * 4})</span>
-                            <span class="text-xs font-bold text-white">$${weeklyVal.toFixed(2)}</span>
-                        </div>
-                    `;
-                }
+                if (showMonthly) rowsHTML += `<div class="flex justify-between items-center bg-slate-950/70 px-2.5 py-1.5 rounded-lg border border-slate-800/60"><span class="text-[10px] text-slate-300 font-medium">Mensual (${plan.months})</span><span class="text-xs font-bold text-white">$${monthlyVal.toFixed(2)}</span></div>`;
+                if (showBiweekly) rowsHTML += `<div class="flex justify-between items-center bg-slate-950/70 px-2.5 py-1.5 rounded-lg border border-slate-800/60"><span class="text-[10px] text-slate-300 font-medium">Quincenal (${plan.months * 2})</span><span class="text-xs font-bold text-white">$${biweeklyVal.toFixed(2)}</span></div>`;
+                if (showWeekly) rowsHTML += `<div class="flex justify-between items-center bg-slate-950/70 px-2.5 py-1.5 rounded-lg border border-slate-800/60"><span class="text-[10px] text-slate-300 font-medium">Semanal (${plan.months * 4})</span><span class="text-xs font-bold text-white">$${weeklyVal.toFixed(2)}</span></div>`;
 
                 if (rowsHTML !== '') {
                     const planCard = document.createElement('div');
                     planCard.className = 'bg-slate-900 border border-slate-800/90 rounded-2xl p-3 space-y-2 shadow-inner';
-                    planCard.innerHTML = `
-                        <div class="flex items-center justify-between">
-                            <h4 class="text-[11px] font-bold uppercase tracking-wider text-[#b48bff]">${plan.label}</h4>
-                            <span class="text-[9px] text-slate-500 font-medium">Cuotas fijas</span>
-                        </div>
-                        <div class="space-y-1.5">
-                            ${rowsHTML}
-                        </div>
-                    `;
+                    planCard.innerHTML = `<h4 class="text-[11px] font-bold uppercase tracking-wider text-[#b48bff]">${plan.label}</h4><div class="space-y-1.5">${rowsHTML}</div>`;
                     container.appendChild(planCard);
                 }
             });
         }
 
-        // FUNCIÓN PARA GUARDAR EN LA NUBE DE SUPABASE
+        // GUARDAR EN SUPABASE (OPTIMIZADO)
         async function guardarCotizacionNube() {
             const clientName = document.getElementById('clientName').value.trim();
             const productDesc = document.getElementById('productDesc').value.trim();
             const basePrice = parseFloat(document.getElementById('basePrice').value);
 
             if (!clientName || !basePrice) {
-                alert('Por favor ingrese al menos el nombre del cliente y el valor base para guardar la cotización.');
+                alert('Por favor ingrese al menos el nombre del cliente y el valor base.');
                 return;
             }
 
             const { data, error } = await _supabase
                 .from('cotizaciones')
-                .insert([
-                    { cliente: clientName, producto: productDesc || 'Dispositivo', precio_base: basePrice }
-                ]);
+                .insert({
+                    cliente: clientName,
+                    producto: productDesc || 'Dispositivo',
+                    precio_base: basePrice
+                });
 
             if (error) {
                 console.error('Error Supabase:', error);
                 alert('Error al guardar: ' + error.message);
             } else {
-                alert('¡Cotización guardada exitosamente en la nube de Supabase!');
+                alert('¡Cotización guardada exitosamente en Supabase!');
                 document.getElementById('clientName').value = '';
                 document.getElementById('productDesc').value = '';
                 document.getElementById('basePrice').value = '';
@@ -420,13 +345,9 @@
             const basePrice = parseFloat(document.getElementById('basePrice').value) || 0;
 
             if (basePrice <= 0) {
-                alert('Por favor ingrese un valor de venta válido antes de copiar el resumen.');
+                alert('Por favor ingrese un valor de venta válido.');
                 return;
             }
-
-            const showMonthly = document.getElementById('showMonthly').checked;
-            const showBiweekly = document.getElementById('showBiweekly').checked;
-            const showWeekly = document.getElementById('showWeekly').checked;
 
             let text = `⚡ *${companyName} - Cotización Oficial* ⚡\n`;
             text += `Hola *${clientName}*, aquí tienes las opciones para el equipo: *${productDesc}*\n\n`;
@@ -440,28 +361,16 @@
 
             plans.forEach(plan => {
                 const totalWithInterest = basePrice * (1 + plan.interest);
-                const monthlyVal = totalWithInterest / plan.months;
-                const biweeklyVal = totalWithInterest / (plan.months * 2);
-                const weeklyVal = totalWithInterest / (plan.months * 4);
-
-                let planLines = '';
-                if (showMonthly) planLines += `• Mensual (${plan.months} cuotas): *$${monthlyVal.toFixed(2)}*\n`;
-                if (showBiweekly) planLines += `• Quincenal (${plan.months * 2} cuotas): *$${biweeklyVal.toFixed(2)}*\n`;
-                if (showWeekly) planLines += `• Semanal (${plan.months * 4} cuotas): *$${weeklyVal.toFixed(2)}*\n`;
-
-                if (planLines !== '') {
-                    text += `${plan.label}\n${planLines}\n`;
-                }
+                text += `${plan.label}\n• Mensual: *$${(totalWithInterest / plan.months).toFixed(2)}*\n• Quincenal: *$${(totalWithInterest / (plan.months * 2)).toFixed(2)}*\n• Semanal: *$${(totalWithInterest / (plan.months * 4)).toFixed(2)}*\n\n`;
             });
 
             text += `¡Escríbenos para agendar tu crédito! 🚀`;
 
             navigator.clipboard.writeText(text).then(() => {
-                alert('¡Resumen copiado al portapapeles listo para WhatsApp!');
+                alert('¡Resumen copiado para WhatsApp!');
             });
         }
 
-        // Ejecutar cálculo inicial
         calculate();
     </script>
 </body>
