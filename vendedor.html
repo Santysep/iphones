@@ -6,8 +6,6 @@
     <title>VALOPHONE - Cotizador de Crédito Inteligente</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- Supabase JS Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -171,11 +169,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <script>
-        // Inicialización de Supabase con URL limpia y llave Anon
+        // Configuración de Supabase Direct Fetch
         const SUPABASE_URL = 'https://rhpixwhmoilxehjnyzjb.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJocGl4d2htb2lseGVoam56eWpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MDM1MTYsImV4cCI6MjEwNjk3OTUxNn0.4YnjRf8oAyw2B3D-xEg5qRDQEoD_fuh8--wICXZedn8';
-        
-        const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let isCleanMode = false;
 
@@ -307,7 +303,7 @@
             });
         }
 
-        // GUARDAR EN SUPABASE (OPTIMIZADO)
+        // GUARDAR MEDIANTE FETCH DIRECTO A SUPABASE
         async function guardarCotizacionNube() {
             const clientName = document.getElementById('clientName').value.trim();
             const productDesc = document.getElementById('productDesc').value.trim();
@@ -318,23 +314,35 @@
                 return;
             }
 
-            const { data, error } = await _supabase
-                .from('cotizaciones')
-                .insert({
-                    cliente: clientName,
-                    producto: productDesc || 'Dispositivo',
-                    precio_base: basePrice
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/cotizaciones`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify({
+                        cliente: clientName,
+                        producto: productDesc || 'Dispositivo',
+                        precio_base: basePrice
+                    })
                 });
 
-            if (error) {
-                console.error('Error Supabase:', error);
-                alert('Error al guardar: ' + error.message);
-            } else {
+                if (!response.ok) {
+                    const errData = await response.json();
+                    throw new Error(errData.message || 'Error en la respuesta del servidor');
+                }
+
                 alert('¡Cotización guardada exitosamente en Supabase!');
                 document.getElementById('clientName').value = '';
                 document.getElementById('productDesc').value = '';
                 document.getElementById('basePrice').value = '';
                 calculate();
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al guardar: ' + error.message);
             }
         }
 
