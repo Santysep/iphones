@@ -203,13 +203,12 @@
     <!-- html2canvas Library for direct image generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-    <!-- Script de lógica y conexión Supabase -->
+    <!-- Script de lógica y conexión Supabase limpia -->
     <script>
-        // Credenciales oficiales de tu proyecto en Supabase
-// Credenciales oficiales de tu proyecto en Supabase
-const supabaseUrl = 'https://rhpixwhmoilxehjnyzjb.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJocGl4d2htb2lseGVoam56eWpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MDM1MTYsImV4cCI6MjEwNjk3OTUxNn0.4YnjRf8oAyw2B3D-xEg5qRDQEoD_fuh8--wICXZedn8';
-const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        const supabaseUrl = 'https://rhpixwhmoilxehjnyzjb.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJocGl4d2htb2lseGVoam56eWpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MDM1MTYsImV4cCI6MjEwNjk3OTUxNn0.4YnjRf8oAyw2B3D-xEg5qRDQEoD_fuh8--wICXZedn8';
+        const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
         let isCleanMode = false;
 
         function toggleCleanMode() {
@@ -255,7 +254,7 @@ const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
                         await navigator.clipboard.write([
                             new ClipboardItem({ 'image/png': blob })
                         ]);
-                        alert('¡Imagen de la cotización copiada al portapapeles! Ya puedes pegarla directamente en WhatsApp o Paint (Ctrl+V).');
+                        alert('¡Imagen de la cotización copiada al portapapeles!');
                     } catch (err) {
                         const link = document.createElement('a');
                         link.download = 'cotizacion-valophone.png';
@@ -266,7 +265,7 @@ const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
                 });
             } catch (error) {
                 console.error(error);
-                alert('No se pudo generar la imagen automáticamente. Usa el "Modo Screenshot" para capturar la pantalla.');
+                alert('No se pudo generar la imagen automáticamente.');
             }
         }
 
@@ -403,8 +402,8 @@ const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
                 ]);
 
             if (error) {
-                console.error(error);
-                alert('Error al guardar en Supabase. Verifica que la tabla "cotizaciones" esté creada en tu base de datos.');
+                console.error('Error Supabase:', error);
+                alert('Error al guardar: ' + error.message);
             } else {
                 alert('¡Cotización guardada exitosamente en la nube de Supabase!');
                 document.getElementById('clientName').value = '';
