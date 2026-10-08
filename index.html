@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VALOPHONE - Inicio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4 selection:bg-[#5900ff] selection:text-white">
+
+    <!-- Tarjeta Principal de Bienvenida -->
+    <div class="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl text-center space-y-6 relative overflow-hidden">
+        <div class="absolute -top-20 -right-20 w-40 h-40 bg-[#5900ff]/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-[#5900ff]/10 rounded-full blur-3xl pointer-events-none"></div>
+        
+        <div class="w-16 h-16 bg-[#5900ff]/20 border border-[#5900ff]/40 rounded-2xl flex items-center justify-center mx-auto text-[#b48bff] text-2xl shadow-inner">
+            <i class="fa-solid fa-mobile-screen-button"></i>
+        </div>
+        
+        <div>
+            <h1 class="text-3xl font-black text-white tracking-tight">VALOPHONE</h1>
+            <p class="text-xs text-slate-400 mt-1">Sistema de Créditos y Cotización Centralizado</p>
+        </div>
+
+        <div class="space-y-3 pt-2">
+            <!-- Botón Vendedor -->
+            <button onclick="window.location.href='vendedor.html'" class="w-full bg-[#5900ff] hover:bg-[#4b00d6] text-white font-bold py-3.5 px-4 rounded-2xl transition shadow-lg shadow-[#5900ff]/30 flex items-center justify-center space-x-2 text-sm cursor-pointer">
+                <i class="fa-solid fa-cash-register"></i>
+                <span>Modo Vendedor</span>
+            </button>
+
+            <!-- Botón Administrador -->
+            <button onclick="abrirModalAdmin()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold py-3.5 px-4 rounded-2xl transition border border-slate-700 flex items-center justify-center space-x-2 text-sm cursor-pointer">
+                <i class="fa-solid fa-lock text-[#b48bff]"></i>
+                <span>Modo Administrador</span>
+            </button>
+        </div>
+
+        <p class="text-[10px] text-slate-500">Quito, Ecuador • Todos los derechos reservados</p>
+    </div>
+
+    <!-- Modal de Contraseña para Administrador -->
+    <div id="modalAdmin" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="max-w-sm w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-shield-halved text-[#5900ff]"></i>
+                    <span>Acceso de Administrador</span>
+                </h3>
+                <button onclick="cerrarModalAdmin()" class="text-slate-400 hover:text-white cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div>
+                <label class="block text-[11px] font-semibold text-slate-400 mb-1">Contraseña de Administrador</label>
+                <input type="password" id="inputClaveAdmin" placeholder="Ingresa tu clave" 
+                    class="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-[#5900ff]">
+            </div>
+            <button onclick="verificarClaveAdmin()" class="w-full bg-[#5900ff] hover:bg-[#4b00d6] text-white font-bold py-2.5 rounded-xl text-xs transition cursor-pointer">
+                Entrar al Panel
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function abrirModalAdmin() {
+            document.getElementById('modalAdmin').classList.remove('hidden');
+        }
+
+        function cerrarModalAdmin() {
+            document.getElementById('modalAdmin').classList.add('hidden');
+            document.getElementById('inputClaveAdmin').value = '';
+        }
+
+        function verificarClaveAdmin() {
+            const clave = document.getElementById('inputClaveAdmin').value;
+            if (clave === 'admin123') {
+                window.location.href = 'admin.html';
+            } else {
+                alert('Contraseña incorrecta.');
+            }
+        }
+    </script>
+</body>
+</html>

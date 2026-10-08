@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VALOPHONE - Cotizador de Crédito Inteligente</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .brand-purple { color: #5900ff; }
+        .bg-brand-purple { background-color: #5900ff; }
+        .border-brand-purple { border-color: #5900ff; }
+        .ring-brand-purple:focus { ring-color: #5900ff; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-[#5900ff] selection:text-white">
+
+    <!-- Header -->
+    <header class="bg-slate-900 border-b border-slate-800/80 py-3 px-6 shadow-md no-print">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <!-- Botón Volver al Inicio -->
+                <button onclick="window.location.href='index.html'" class="bg-slate-800 hover:bg-slate-700 text-slate-300 p-2 rounded-xl text-xs transition cursor-pointer" title="Volver al Inicio">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <!-- Editable Logo Slot -->
+                <div id="headerLogoContainer" class="relative group cursor-pointer w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center overflow-hidden shadow-inner">
+                    <span id="headerLogoPlaceholder" class="text-[10px] text-slate-400 font-bold text-center px-1">Logo</span>
+                    <img id="headerLogoImg" src="" alt="Logo" class="w-full h-full object-cover hidden">
+                    <input type="file" accept="image/*" onchange="loadLogo(event)" class="absolute inset-0 opacity-0 cursor-pointer" title="Subir logo de la empresa">
+                </div>
+                <div>
+                    <input type="text" id="companyNameInput" value="VALOPHONE" oninput="updateCompanyName(this.value)" 
+                        class="bg-transparent text-white font-extrabold text-base tracking-tight focus:outline-none focus:border-b focus:border-[#5900ff] max-w-[180px]">
+                    <p class="text-[10px] text-slate-400">Sistema de Cotización Rápida</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button onclick="copyCardAsImage()" class="bg-[#5900ff] hover:bg-[#4b00d6] text-white px-3.5 py-2 rounded-xl text-xs font-semibold transition shadow-lg shadow-[#5900ff]/30 flex items-center space-x-2 cursor-pointer">
+                    <i class="fa-solid fa-copy"></i>
+                    <span>Copiar Imagen</span>
+                </button>
+                <button onclick="toggleCleanMode()" id="cleanModeBtn" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3.5 py-2 rounded-xl text-xs font-semibold transition border border-slate-700 flex items-center space-x-2 cursor-pointer">
+                    <i class="fa-solid fa-camera"></i>
+                    <span>Modo Screenshot</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 w-full my-auto">
+        
+        <!-- Controls Section (Left Column) -->
+        <div id="controlsSection" class="lg:col-span-4 bg-slate-900/90 backdrop-blur border border-slate-800 rounded-3xl p-5 shadow-xl flex flex-col justify-between space-y-4">
+            <div class="space-y-4">
+                <h2 class="text-sm font-bold text-white border-b border-slate-800 pb-2.5 flex items-center space-x-2">
+                    <i class="fa-solid fa-sliders text-[#5900ff]"></i>
+                    <span>Parámetros de Cotización</span>
+                </h2>
+
+                <!-- Client Name -->
+                <div>
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Nombre del Cliente (Opcional)</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500 text-xs"><i class="fa-solid fa-user"></i></span>
+                        <input type="text" id="clientName" placeholder="Ej. María López" oninput="calculate()" 
+                            class="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 pl-9 pr-3 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-[#5900ff] transition font-medium">
+                    </div>
+                </div>
+
+                <!-- Product Description -->
+                <div>
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Producto o Dispositivo</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500 text-xs"><i class="fa-solid fa-box"></i></span>
+                        <input type="text" id="productDesc" placeholder="Ej. iPhone 14 Pro 128GB" oninput="calculate()" 
+                            class="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 pl-9 pr-3 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-[#5900ff] transition font-medium">
+                    </div>
+                </div>
+
+                <!-- Cash Price -->
+                <div>
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Valor de Venta / Base ($)</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-[#5900ff] font-bold">$</span>
+                        <input type="number" id="basePrice" placeholder="0.00" oninput="calculate()" value="" 
+                            class="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 pl-9 pr-3 text-white placeholder-slate-600 focus:outline-none focus:border-[#5900ff] transition font-bold text-sm">
+                    </div>
+                </div>
+
+                <!-- Frequency Toggles -->
+                <div class="pt-2 border-t border-slate-800">
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2">Frecuencias a mostrar</label>
+                    <div class="grid grid-cols-3 gap-1.5">
+                        <label class="flex items-center justify-center space-x-1.5 bg-slate-950 border border-slate-800 hover:border-slate-700 p-2 rounded-xl cursor-pointer select-none transition">
+                            <input type="checkbox" id="showMonthly" checked onchange="calculate()" class="w-3.5 h-3.5 text-[#5900ff] rounded bg-slate-900 border-slate-700 focus:ring-0">
+                            <span class="text-[11px] font-medium text-slate-300">Mensual</span>
+                        </label>
+                        <label class="flex items-center justify-center space-x-1.5 bg-slate-950 border border-slate-800 hover:border-slate-700 p-2 rounded-xl cursor-pointer select-none transition">
+                            <input type="checkbox" id="showBiweekly" checked onchange="calculate()" class="w-3.5 h-3.5 text-[#5900ff] rounded bg-slate-900 border-slate-700 focus:ring-0">
+                            <span class="text-[11px] font-medium text-slate-300">Quincenal</span>
+                        </label>
+                        <label class="flex items-center justify-center space-x-1.5 bg-slate-950 border border-slate-800 hover:border-slate-700 p-2 rounded-xl cursor-pointer select-none transition">
+                            <input type="checkbox" id="showWeekly" checked onchange="calculate()" class="w-3.5 h-3.5 text-[#5900ff] rounded bg-slate-900 border-slate-700 focus:ring-0">
+                            <span class="text-[11px] font-medium text-slate-300">Semanal</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="space-y-2 pt-2">
+                <!-- Botón Guardar Cotización en Supabase -->
+                <button onclick="guardarCotizacionNube()" class="w-full bg-[#5900ff] hover:bg-[#4b00d6] text-white font-bold py-2.5 px-4 rounded-xl transition shadow-lg shadow-[#5900ff]/30 flex items-center justify-center space-x-2 text-xs cursor-pointer">
+                    <i class="fa-solid fa-cloud-arrow-up text-base"></i>
+                    <span>Guardar Cotización en el Sistema</span>
+                </button>
+                <button onclick="copyWhatsAppSummary()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-4 rounded-xl transition shadow-lg shadow-emerald-600/20 flex items-center justify-center space-x-2 text-xs cursor-pointer">
+                    <i class="fa-brands fa-whatsapp text-base"></i>
+                    <span>Copiar Resumen para WhatsApp</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Preview Card Section (Right Column) -->
+        <div class="lg:col-span-8 flex flex-col justify-center items-center relative">
+            
+            <!-- Floating Exit Clean Mode Button (Visible only in clean mode) -->
+            <button onclick="toggleCleanMode()" id="exitCleanModeBtn" class="hidden absolute top-2 right-2 z-50 bg-slate-800/90 hover:bg-slate-700 text-white p-3 rounded-full shadow-2xl transition border border-slate-600 no-print" title="Salir de Modo Screenshot">
+                <i class="fa-solid fa-xmark text-base"></i>
+            </button>
+
+            <!-- Screenshot Card Container - Compact 2x2 Grid Layout for perfect screen fit -->
+            <div id="quotationCard" class="w-full max-w-2xl bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 border-2 border-[#5900ff]/40 rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden">
+                
+                <!-- Background decorative glow in #5900ff -->
+                <div class="absolute -top-20 -right-20 w-40 h-40 bg-[#5900ff]/15 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-[#5900ff]/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <!-- Card Header with Editable Logo & Title Slot -->
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3.5 mb-4">
+                    <div class="flex items-center space-x-3">
+                        <!-- Card Logo Slot -->
+                        <div id="cardLogoContainer" class="relative group cursor-pointer w-12 h-12 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center overflow-hidden shadow-md">
+                            <span id="cardLogoPlaceholder" class="text-[10px] text-slate-400 font-bold text-center px-1">Logo</span>
+                            <img id="cardLogoImg" src="" alt="Logo" class="w-full h-full object-cover hidden">
+                            <input type="file" accept="image/*" onchange="loadLogo(event)" class="absolute inset-0 opacity-0 cursor-pointer" title="Subir logo">
+                        </div>
+                        <div>
+                            <div class="flex items-center space-x-1">
+                                <span id="displayCompanyName" class="text-xl font-black tracking-tight text-white">VALOPHONE</span>
+                            </div>
+                            <p class="text-[9px] font-semibold text-slate-400 uppercase tracking-widest">Cotización Oficial de Crédito</p>
+                        </div>
+                    </div>
+                    <div class="bg-[#5900ff]/15 border border-[#5900ff]/40 px-3 py-1 rounded-full">
+                        <span class="text-[10px] font-bold text-[#b48bff] uppercase tracking-wider">Crédito Directo</span>
+                    </div>
+                </div>
+
+                <!-- Client / Product Info Badge -->
+                <div id="cardInfoBox" class="bg-slate-950/80 border border-slate-800/80 rounded-xl px-4 py-2.5 mb-4 flex items-center justify-between">
+                    <div>
+                        <span class="text-[9px] text-slate-400 uppercase tracking-wider block">Cliente</span>
+                        <span id="displayClient" class="text-xs font-bold text-white">Estimado Cliente</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-[9px] text-slate-400 uppercase tracking-wider block">Equipo</span>
+                        <span id="displayProduct" class="text-xs font-bold text-[#b48bff] max-w-[200px] truncate block">Seleccione equipo</span>
+                    </div>
+                </div>
+
+                <!-- Plans Grid Container (2x2 Grid) -->
+                <div id="plansContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <!-- Dinámicamente inyectado mediante JS -->
+                </div>
+
+                <!-- Card Footer Stamp -->
+                <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-500">
+                    <span class="font-medium"><i class="fa-solid fa-location-dot text-[#5900ff] mr-1"></i> Quito, Ecuador</span>
+                    <span id="displayFooterBrand" class="font-semibold text-slate-400">Garantía y Confianza VALOPHONE</span>
+                </div>
+            </div>
+
+            <p class="text-[11px] text-slate-500 mt-3 text-center no-print">
+                Consejo: Haz clic en <span class="text-slate-300 font-semibold">"Modo Screenshot"</span> para ocultar los controles y tomar la captura perfecta.
+            </p>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 py-2.5 text-center text-[11px] text-slate-500 no-print">
+        <span id="displayFooterCopy">VALOPHONE</span> &copy; 2026 - Todos los derechos reservados
+    </footer>
+
+    <!-- html2canvas Library for direct image generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <!-- Script de lógica y conexión Supabase -->
+    <script>
+        // Credenciales oficiales de tu proyecto en Supabase
+        const supabaseUrl = 'https://rhpixwhmoilxehjnyzjb.supabase.co';
+        const supabaseKey = 'sb_publishable_VAcqw9E0nVDeX5AYlfJGVQ_jdjZjQNB';
+        const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        let isCleanMode = false;
+
+        function toggleCleanMode() {
+            isCleanMode = !isCleanMode;
+            const controls = document.getElementById('controlsSection');
+            const header = document.querySelector('header');
+            const footer = document.querySelector('footer');
+            const btn = document.getElementById('cleanModeBtn');
+            const exitBtn = document.getElementById('exitCleanModeBtn');
+
+            if (isCleanMode) {
+                controls.classList.add('hidden');
+                header.classList.add('hidden');
+                footer.classList.add('hidden');
+                exitBtn.classList.remove('hidden');
+                document.querySelector('main').classList.remove('lg:grid-cols-12');
+                document.querySelector('main').classList.add('flex', 'justify-center');
+                btn.innerHTML = '<i class="fa-solid fa-rotate-left"></i><span>Restaurar Vista</span>';
+                btn.classList.add('bg-[#5900ff]', 'text-white', 'font-bold');
+            } else {
+                controls.classList.remove('hidden');
+                header.classList.remove('hidden');
+                footer.classList.remove('hidden');
+                exitBtn.classList.add('hidden');
+                document.querySelector('main').classList.add('lg:grid-cols-12');
+                document.querySelector('main').classList.remove('flex', 'justify-center');
+                btn.innerHTML = '<i class="fa-solid fa-camera"></i><span>Modo Screenshot</span>';
+                btn.classList.remove('bg-[#5900ff]', 'text-white', 'font-bold');
+            }
+        }
+
+        async function copyCardAsImage() {
+            const card = document.getElementById('quotationCard');
+            try {
+                const canvas = await html2canvas(card, {
+                    scale: 3,
+                    backgroundColor: null,
+                    useCORS: true
+                });
+
+                canvas.toBlob(async (blob) => {
+                    try {
+                        await navigator.clipboard.write([
+                            new ClipboardItem({ 'image/png': blob })
+                        ]);
+                        alert('¡Imagen de la cotización copiada al portapapeles! Ya puedes pegarla directamente en WhatsApp o Paint (Ctrl+V).');
+                    } catch (err) {
+                        const link = document.createElement('a');
+                        link.download = 'cotizacion-valophone.png';
+                        link.href = canvas.toDataURL('image/png');
+                        link.click();
+                        alert('Imagen descargada a tu computadora con éxito.');
+                    }
+                });
+            } catch (error) {
+                console.error(error);
+                alert('No se pudo generar la imagen automáticamente. Usa el "Modo Screenshot" para capturar la pantalla.');
+            }
+        }
+
+        function updateCompanyName(name) {
+            const cleanName = name.trim() !== '' ? name.trim() : 'MI EMPRESA';
+            document.getElementById('displayCompanyName').innerText = cleanName;
+            document.getElementById('displayFooterBrand').innerText = `Garantía y Confianza ${cleanName}`;
+            document.getElementById('displayFooterCopy').innerText = cleanName;
+        }
+
+        function loadLogo(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageUrl = e.target.result;
+                    
+                    const headerImg = document.getElementById('headerLogoImg');
+                    const headerPlaceholder = document.getElementById('headerLogoPlaceholder');
+                    headerImg.src = imageUrl;
+                    headerImg.classList.remove('hidden');
+                    headerPlaceholder.classList.add('hidden');
+
+                    const cardImg = document.getElementById('cardLogoImg');
+                    const cardPlaceholder = document.getElementById('cardLogoPlaceholder');
+                    cardImg.src = imageUrl;
+                    cardImg.classList.remove('hidden');
+                    cardPlaceholder.classList.add('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function calculate() {
+            const clientName = document.getElementById('clientName').value.trim();
+            const productDesc = document.getElementById('productDesc').value.trim();
+            const basePrice = parseFloat(document.getElementById('basePrice').value) || 0;
+
+            const showMonthly = document.getElementById('showMonthly').checked;
+            const showBiweekly = document.getElementById('showBiweekly').checked;
+            const showWeekly = document.getElementById('showWeekly').checked;
+
+            document.getElementById('displayClient').innerText = clientName !== '' ? clientName : 'Estimado Cliente';
+            document.getElementById('displayProduct').innerText = productDesc !== '' ? productDesc : 'Dispositivo Tecnológico';
+
+            const plans = [
+                { months: 3, interest: 0.30, label: 'Plan a 3 Meses' },
+                { months: 6, interest: 0.50, label: 'Plan a 6 Meses' },
+                { months: 9, interest: 0.70, label: 'Plan a 9 Meses' },
+                { months: 12, interest: 0.90, label: 'Plan a 12 Meses' }
+            ];
+
+            const container = document.getElementById('plansContainer');
+            container.innerHTML = '';
+
+            if (basePrice <= 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-6 text-slate-500 border border-dashed border-slate-800 rounded-2xl">
+                        <i class="fa-solid fa-calculator text-2xl mb-1.5 text-slate-600"></i>
+                        <p class="text-xs">Ingrese un valor de venta para calcular cuotas</p>
+                    </div>
+                `;
+                return;
+            }
+
+            plans.forEach(plan => {
+                const totalWithInterest = basePrice * (1 + plan.interest);
+                
+                const monthlyVal = totalWithInterest / plan.months;
+                const biweeklyVal = totalWithInterest / (plan.months * 2);
+                const weeklyVal = totalWithInterest / (plan.months * 4);
+
+                let rowsHTML = '';
+
+                if (showMonthly) {
+                    rowsHTML += `
+                        <div class="flex justify-between items-center bg-slate-950/70 px-2.5 py-1.5 rounded-lg border border-slate-800/60">
+                            <span class="text-[10px] text-slate-300 font-medium flex items-center"><i class="fa-regular fa-calendar text-[#b48bff] mr-1.5"></i> Mensual (${plan.months})</span>
+                            <span class="text-xs font-bold text-white">$${monthlyVal.toFixed(2)}</span>
+                        </div>
+                    `;
+                }
+
+                if (showBiweekly) {
+                    rowsHTML += `
+                        <div class="flex justify-between items-center bg-slate-950/70 px-2.5 py-1.5 rounded-lg border border-slate-800/60">
+                            <span class="text-[10px] text-slate-300 font-medium flex items-center"><i class="fa-solid fa-calendar-days text-[#b48bff] mr-1.5"></i> Quincenal (${plan.months * 2})</span>
+                            <span class="text-xs font-bold text-white">$${biweeklyVal.toFixed(2)}</span>
+                        </div>
+                    `;
+                }
+
+                if (showWeekly) {
+                    rowsHTML += `
+                        <div class="flex justify-between items-center bg-slate-950/70 px-2.5 py-1.5 rounded-lg border border-slate-800/60">
+                            <span class="text-[10px] text-slate-300 font-medium flex items-center"><i class="fa-solid fa-calendar-week text-[#b48bff] mr-1.5"></i> Semanal (${plan.months * 4})</span>
+                            <span class="text-xs font-bold text-white">$${weeklyVal.toFixed(2)}</span>
+                        </div>
+                    `;
+                }
+
+                if (rowsHTML !== '') {
+                    const planCard = document.createElement('div');
+                    planCard.className = 'bg-slate-900 border border-slate-800/90 rounded-2xl p-3 space-y-2 shadow-inner';
+                    planCard.innerHTML = `
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-[11px] font-bold uppercase tracking-wider text-[#b48bff]">${plan.label}</h4>
+                            <span class="text-[9px] text-slate-500 font-medium">Cuotas fijas</span>
+                        </div>
+                        <div class="space-y-1.5">
+                            ${rowsHTML}
+                        </div>
+                    `;
+                    container.appendChild(planCard);
+                }
+            });
+        }
+
+        // FUNCIÓN PARA GUARDAR EN LA NUBE DE SUPABASE
+        async function guardarCotizacionNube() {
+            const clientName = document.getElementById('clientName').value.trim();
+            const productDesc = document.getElementById('productDesc').value.trim();
+            const basePrice = parseFloat(document.getElementById('basePrice').value);
+
+            if (!clientName || !basePrice) {
+                alert('Por favor ingrese al menos el nombre del cliente y el valor base para guardar la cotización.');
+                return;
+            }
+
+            const { data, error } = await _supabase
+                .from('cotizaciones')
+                .insert([
+                    { cliente: clientName, producto: productDesc || 'Dispositivo', precio_base: basePrice }
+                ]);
+
+            if (error) {
+                console.error(error);
+                alert('Error al guardar en Supabase. Verifica que la tabla "cotizaciones" esté creada en tu base de datos.');
+            } else {
+                alert('¡Cotización guardada exitosamente en la nube de Supabase!');
+                document.getElementById('clientName').value = '';
+                document.getElementById('productDesc').value = '';
+                document.getElementById('basePrice').value = '';
+                calculate();
+            }
+        }
+
+        function copyWhatsAppSummary() {
+            const companyName = document.getElementById('companyNameInput').value.trim() || 'VALOPHONE';
+            const clientName = document.getElementById('clientName').value.trim() || 'Estimado Cliente';
+            const productDesc = document.getElementById('productDesc').value.trim() || 'Dispositivo Tecnológico';
+            const basePrice = parseFloat(document.getElementById('basePrice').value) || 0;
+
+            if (basePrice <= 0) {
+                alert('Por favor ingrese un valor de venta válido antes de copiar el resumen.');
+                return;
+            }
+
+            const showMonthly = document.getElementById('showMonthly').checked;
+            const showBiweekly = document.getElementById('showBiweekly').checked;
+            const showWeekly = document.getElementById('showWeekly').checked;
+
+            let text = `⚡ *${companyName} - Cotización Oficial* ⚡\n`;
+            text += `Hola *${clientName}*, aquí tienes las opciones para el equipo: *${productDesc}*\n\n`;
+
+            const plans = [
+                { months: 3, interest: 0.30, label: '🔹 PLAN A 3 MESES' },
+                { months: 6, interest: 0.50, label: '🔹 PLAN A 6 MESES' },
+                { months: 9, interest: 0.70, label: '🔹 PLAN A 9 MESES' },
+                { months: 12, interest: 0.90, label: '🔹 PLAN A 12 MESES' }
+            ];
+
+            plans.forEach(plan => {
+                const totalWithInterest = basePrice * (1 + plan.interest);
+                const monthlyVal = totalWithInterest / plan.months;
+                const biweeklyVal = totalWithInterest / (plan.months * 2);
+                const weeklyVal = totalWithInterest / (plan.months * 4);
+
+                let planLines = '';
+                if (showMonthly) planLines += `• Mensual (${plan.months} cuotas): *$${monthlyVal.toFixed(2)}*\n`;
+                if (showBiweekly) planLines += `• Quincenal (${plan.months * 2} cuotas): *$${biweeklyVal.toFixed(2)}*\n`;
+                if (showWeekly) planLines += `• Semanal (${plan.months * 4} cuotas): *$${weeklyVal.toFixed(2)}*\n`;
+
+                if (planLines !== '') {
+                    text += `${plan.label}\n${planLines}\n`;
+                }
+            });
+
+            text += `¡Escríbenos para agendar tu crédito! 🚀`;
+
+            navigator.clipboard.writeText(text).then(() => {
+                alert('¡Resumen copiado al portapapeles listo para WhatsApp!');
+            });
+        }
+
+        // Ejecutar cálculo inicial
+        calculate();
+    </script>
+</body>
+</html>
